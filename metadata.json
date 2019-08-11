@@ -1,0 +1,92 @@
+{
+  "name": "hlindberg-tahu",
+  "version": "0.1.0",
+  "author": "henrik lindberg",
+  "summary": "A collection of functions for puppet",
+  "license": "Apace-2.0",
+  "source": "https://github.com/hlindberg/tahu",
+  "project_page": "https://github.com/hlindberg/tahu/README.md",
+  "issues_url": "https://github.com/hlindberg/tahu/issues",
+  "dependencies": [
+
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "16.04"
+      ]
+    },
+    {
+      "operatingsystem": "windows",
+      "operatingsystemrelease": [
+        "2008 R2",
+        "2012 R2",
+        "10"
+      ]
+    },
+    {
+      "operatingsystem": "Solaris",
+      "operatingsystemrelease": [
+        "11"
+      ]
+    },
+    {
+      "operatingsystem": "SLES",
+      "operatingsystemrelease": [
+        "12"
+      ]
+    },
+    {
+      "operatingsystem": "Darwin",
+      "operatingsystemrelease": [
+        "16"
+      ]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "25"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.10.0 < 7.0.0"
+    }
+  ],
+  "pdk-version": "1.11.1",
+  "template-url": "pdk-default#1.11.1",
+  "template-ref": "1.11.1-0-g2ff8c24"
+}
