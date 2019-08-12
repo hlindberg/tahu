@@ -91,8 +91,9 @@ module PuppetSpec; module Compiler
   # Uses a created node 'testnode' if none is given.
   # (Parameters given by name)
   #
-  def evaluate(code: 'undef', source: nil, node: Puppet::Node.new('testnode'), variables: {})
-    source_location = caller[0]
+  def evaluate(code: 'undef', source: nil, node: Puppet::Node.new('testnode'), variables: {}, source_location: nil)
+    node.environment = Puppet.lookup(:current_environment)
+    source_location = caller[0] unless source_location
     Puppet[:code] = code
     compiler = Puppet::Parser::Compiler.new(node)
     unless variables.empty?
@@ -108,7 +109,13 @@ module PuppetSpec; module Compiler
 
     # evaluate given source is the context of the compiled state and return its result
     compiler.compile do |catalog |
-      Puppet::Pops::Parser::EvaluatingParser.singleton.evaluate_string(compiler.topscope, source, source_location)
+      ast = Puppet::Pops::Parser::EvaluatingParser.singleton.parse_string(source, source_location)
+      bridged = Puppet::Parser::AST::PopsBridge::Program.new(ast, {:file => source_location})
+      # define all catalog types
+      compiler.environment.known_resource_types.import_ast(bridged, "")
+      bridged.evaluate(compiler.topscope)
+
+      Puppet::Pops::Parser::EvaluatingParser.singleton.evaluate(compiler.topscope, ast)
     end
   end
 end
