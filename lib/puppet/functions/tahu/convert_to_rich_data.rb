@@ -14,7 +14,7 @@ Puppet::Functions.create_function(:'tahu::convert_to_rich_data', Puppet::Functio
       :type_by_reference => false,
       :local_reference => false,
       :emit_warnings => true,
-      :message_prefix => "data produced by to_rich_data()"
+      :message_prefix => "data produced by convert_to_rich_data()"
       )
     return serialized
   end
