@@ -46,7 +46,7 @@ YAML files.
 
 ### Data type parsing
 
-The function `to_type` transforms a string into a data type. For example `tahu::to_type("Integer[1,10]")` would parse the string
+The function `tahu::to_type` transforms a string into a data type. For example `tahu::to_type("Integer[1,10]")` would parse the string
 and return the actual type.
 
 ## Usage
@@ -66,5 +66,5 @@ Puppet Strings.
 
 Written by Henrik Lindberg - Slack/IRC: helindbe.
 
-* Nothing to see here yet - this is just release
+* Nothing to see here yet
 
