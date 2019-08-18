@@ -19,7 +19,7 @@ This module provides features for:
 * Type reflection
 * Data type parsing
 
-#### Stacktrace
+### Stacktrace
 
 The functions `tahu::where` and `tahu::stacktrace` provides information how the logic ended up at a particular file and line.
 This is useful for custom error messages in functions, or for debugging purposes - answering "how did it end up calling this function?".
