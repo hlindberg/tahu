@@ -1,26 +1,34 @@
-# Produces an Array of Callable signatures (parameters with types, and returned type)  of functions.
+# Produces an `Array` of `Callable` signatures (parameters with types, and returned type) of functions.
 #
-# The callable_signature() function returns an Array with one or more `Type[Callable]` describing how a function can be called,
+# Returns an `Array` with one or more `Type[Callable]` describing how a function can be called,
 # or how the `new` function of a data type can be called.
 #
-# @Example Getting the callable signature of a function
-# ```puppet
-# notice(tahu::callable_signature("size"))
-# ```
-# Would notice: `[Callable[Variant[Collection, String, Binary]]]`
-#
-# Data Type signatures are produced as function signatures for the respective type's `new` function
+# Data type signatures are produced as function signatures for the respective type's `new` function
 # except for `CatalogEntry` data types since they have different semantics and for which this function returns `undef`.
 # The value `undef` is also returned for non existing functions and for data types that do not have a `new` function.
 #
+# @example Getting the callable signature of a function
+#   notice(tahu::callable_signature("size"))
+#   # Would notice: `[Callable[Variant[Collection, String, Binary]]]`
+#
+# @example Getting the callable signature of a data type
+#   notice(tahu::callable_signature(Integer))
+#   # Would notice: [Callable[Convertible, Radix, Boolean, 1, 3], Callable[NamedArgs]]
+#
+# See
+# * `tahu::is_callable_with` for testing if a callable can be called with a give set of arguments.
+# * `tahu::signature` to get more information about the signature as a data structure.
+#
 Puppet::Functions.create_function(:'tahu::callable_signature', Puppet::Functions::InternalFunction) do
 
+  # @param function_name - The name of a function to get Callable signature(s) from
   dispatch :function_signature do
     scope_param
-    required_param 'String', :function
+    required_param 'String', :function_name
     return_type 'Optional[Array[Type[Callable]]]'
   end
 
+  # @param type - The Type to get Callable signature(s) from its `new` function
   dispatch :type_new_signature do
     scope_param
     required_param 'Type', :type

@@ -1,54 +1,52 @@
-# Evaluates a string containing Puppet Language source.
+# Evaluates a string containing Puppet Language source and returns the result.
+#
 # The primary intended use case is to combine `eval` with
 # `Deferred` to enable evaluating arbitrary code on the agent side
 # when applying a catalog.
-#
-# @example Using `eval`
-#
-# ```puppet
-# tahu::eval("\$x + \$y", { 'x' => 10, 'y' => 20}) # produces 30
-# ```
-#
-# Note the escaped `$` characters since interpolation is unwanted.
-#
-# ```puppet
-# Deferred('tahu::eval' ["\$x + \$y", { 'x' => 10, 'y' => 20})] # produces 30 on the agent
-# ```
 #
 # This function can be used when there is the need to format or transform deferred
 # values since doing that with only deferred values can be difficult to construct
 # or impossible to achieve when a lambda is needed.
 #
+# The function accepts a Puppet Language string, and an optional `Hash[String, Any]`
+# with a map of local variables to make available when the string is evaluated - this
+# is how values can be passed from the location where a deferred `eval` is created
+# to the location where it will be resolved/evaluated.
+#
+# @example Using `eval`
+#   tahu::eval("\$x + \$y", { 'x' => 10, 'y' => 20}) # produces 30
+#   # Note the escaped `$` characters since interpolation is unwanted.
+#
+#   Deferred('tahu::eval' ["\$x + \$y", { 'x' => 10, 'y' => 20})] # produces 30 on the agent
+#
 # @example Evaluating logic on agent requiring use of "filter"
+#   Deferred('tahu::eval', "local_lookup('key').filter |\$x| { \$x =~ Integer }")
 #
-# ```puppet
-# Deferred('tahu::eval', "local_lookup('key').filter |\$x| { \$x =~ Integer }")
-# ```
+# @example Asserting the type of value produced by an eval is simply done by calling `assert_type`
+#   tahu::eval("assert_type(Integer, \$x + \$y))", { 'x' => 10, 'y' => 20})
 #
-# To assert the return type - this is simply done by calling `assert_type`
-# as part of the string to evaluate.
-#
-# @example
-# ```puppet
-# tahu::eval("assert_type(Integer, \$x + \$y))", { 'x' => 10, 'y' => 20})
-# ```
-# @since 0.1.0 - requires Puppet 6.1.0
+# Requires Puppet 6.1.0
 #
 Puppet::Functions.create_function(:'tahu::eval', Puppet::Functions::InternalFunction) do
+  # @param code - Puppet Language source string to evaluate
   dispatch :eval_puppet do
-    scope_param             # Due to PUP-9252 must use scope here instead of compiler_param
+    scope_param
     param 'String', :code
-    optional_param 'Hash[String, Any]', :variables
+    return_type 'Any'
   end
 
-  # NOTE: When PUP-9252 is in place the method below can be changed to this one-liner:
-  #  def eval_puppet(compiler, code, variables = {})
-  #    compiler.in_local_scope(variables) { compiler.evaluate_string(code) }
-  #  end
-  # Then also:
-  #   * use compiler_param instead of scope_param in the dispatcher.
-  #   * remove the two supporting methods `evaluate` and `in_local_scope`
+  # @param code - Puppet Language source string to evaluate
+  # @param variables - variable names (without $) to value map of local variables to set before evaluation
+  dispatch :eval_puppet_with_variables do
+    scope_param
+    param 'String', :code
+    param 'Hash[String, Any]', :variables
+    return_type 'Any'
+  end
 
+  def eval_puppet_with_variables(scope, code, variables)
+    eval_puppet(scope, code, variables)
+  end
 
   def eval_puppet(scope, code, variables = {})
     compiler = (Puppet[:tasks] ? Puppet::Pal::ScriptCompiler : Puppet::Pal::CatalogCompiler).new(scope.compiler)

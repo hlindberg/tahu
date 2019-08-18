@@ -25,13 +25,15 @@
 #
 Puppet::Functions.create_function(:'tahu::type_attributes', Puppet::Functions::InternalFunction) do
 
+  # @param object_type - The Type[Object] to get type attributes from
   dispatch :type_attributes_from_object_type do
-    required_param 'Type[Object]', :value
+    required_param 'Type[Object]', :object_type
     return_type 'Hash[String, Type]'
   end
 
+  # @param type - The Type to get type attributes from
   dispatch :type_attributes_from_type do
-    required_param 'Type', :value
+    required_param 'Type', :type
     return_type 'Hash[String, Type]'
   end
 

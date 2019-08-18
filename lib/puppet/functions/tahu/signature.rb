@@ -1,4 +1,4 @@
-# Returns the type signature (parameters with types, and returned type) of "callable" entities.
+# Returns a data structure describing the type signature (parameters with types, and returned type) of "callable" entities.
 #
 # The signature() function can return a signature for:
 # * Functions
@@ -8,12 +8,6 @@
 #
 # *Function Signatures* are obtained by giving the functions name as a String.
 #
-# @Example Getting the signature of a function
-# ```puppet
-# notice(tahu::signature("size"))
-# ```
-# Would notice: `[{parameters => {arg => {type => Variant[Collection, String, Binary]}}, return_type => Any}]`
-#
 # *Data Type signatures* are produced as function signatures for the respective type's `new` function
 # except for `CatalogEntry` data types since they have different semantics.
 # For `CatalogEntry` data types it is also possible to obtain a signature with (or without) meta parameters.
@@ -22,52 +16,42 @@
 # * `Resource[<typename>]` - used to get the signature of a resource type. Short form aliases can be used, for example `File`.
 # * `Class[<classname>]` - used to get the signature of a class.
 #
-# @Example Getting the signature of a class.
-# ```puppet
-# class testing(Integer $x, String $y) { }
-# notice(tahu::signature(Class['testing']))
-# ```
-# Would notice `{x => {type => Integer}, y => {type => String}}`
+# @example Getting the signature of a function
+#   notice(tahu::signature("size"))
+#   # Would notice: `[{parameters => {arg => {type => Variant[Collection, String, Binary]}}, return_type => Any}]`
 #
-# @Example Including meta parameters
-# ```puppet
-# notice(tahu::signature(Class['testing'], true))
-# ```
+# @example Getting the signature of a class.
+#   class testing(Integer $x, String $y) { }
+#   notice(tahu::signature(Class['testing']))
+#   # Would notice `{x => {type => Integer}, y => {type => String}}`
 #
-# @Example Getting the parameter-names of a class.
-# ```puppet
-# tahu::signature(Class['testing'])['parameters'].keys()
-# ```
-# *Non CatalogEntry signatures* are produced for a data type's `new` function.
+# @example Including meta parameters
+#   notice(tahu::signature(Class['testing'], true))
 #
-# @Example Getting the signature of a general data type
-# ```puppet
-# notice(tahu::signature(Integer))
-# ```
-# Would notice this quite long signature:
-# ```puppet
-# [
-#  { parameters => {
-#       from  => {type => Convertible = Variant[Numeric, Boolean, Pattern[/\A[+-]?\s*(?:(?:\d+)|(?:0[xX][0-9A-Fa-f]+)|(?:0[bB][01]+))\z/], Timespan, Timestamp]},
-#       radix => {type => Radix = Variant[Default, Integer[2, 2], Integer[8, 8], Integer[10, 10], Integer[16, 16]]},
-#       abs   => {type => Boolean, optional => true}
-#     },
-#     return_type => Any
-#   },
-#  { parameters => {
-#    hash_args => {
-#      type => NamedArgs = Struct[{
-#       'from'            => Convertible = Variant[Numeric, Boolean, Pattern[/\A[+-]?\s*(?:(?:\d+)|(?:0[xX][0-9A-Fa-f]+)|(?:0[bB][01]+))\z/], Timespan, Timestamp],
-#       Optional['radix'] => Radix = Variant[Default, Integer[2, 2], Integer[8, 8], Integer[10, 10], Integer[16, 16]],
-#       Optional['abs']   => Boolean
-#    }]}},
-#   return_type => Any
-#  }
-# ]
-# ```
-# Note that the output shown above is a snapshot of the signature of `Integer.new` - it may be different in your version of Puppet. Also note
-# that the stringified output shown above show expanded type aliases - for example `Convertible = Variant[...]` which
-# is how such a type alias is expanded into a String.
+# @example Getting the parameter-names of a class.
+#   tahu::signature(Class['testing'])['parameters'].keys()
+#
+# @example Getting the signature of a general data type
+#   notice(tahu::signature(Integer))
+#   # Would notice this quite long signature:
+#   # [
+#   #   { parameters => {
+#   #       from  => {type => Convertible = Variant[Numeric, Boolean, Pattern[/\A[+-]?\s*(?:(?:\d+)|(?:0[xX][0-9A-Fa-f]+)|(?:0[bB][01]+))\z/], Timespan, Timestamp]},
+#   #       radix => {type => Radix = Variant[Default, Integer[2, 2], Integer[8, 8], Integer[10, 10], Integer[16, 16]]},
+#   #       abs   => {type => Boolean, optional => true}
+#   #     },
+#   #     return_type => Any
+#   #   },
+#   #   { parameters => {
+#   #     hash_args => {
+#   #       type => NamedArgs = Struct[{
+#   #         'from'            => Convertible = Variant[Numeric, Boolean, Pattern[/\A[+-]?\s*(?:(?:\d+)|(?:0[xX][0-9A-Fa-f]+)|(?:0[bB][01]+))\z/], Timespan, Timestamp],
+#   #         Optional['radix'] => Radix = Variant[Default, Integer[2, 2], Integer[8, 8], Integer[10, 10], Integer[16, 16]],
+#   #         Optional['abs']   => Boolean
+#   #     }]}},
+#   #     return_type => Any
+#   #   }
+#   # ]
 #
 # ### Returned values
 #
@@ -106,12 +90,15 @@
 #
 Puppet::Functions.create_function(:'tahu::signature', Puppet::Functions::InternalFunction) do
 
+  # @param function - the name of the function to get signature(s) from
   dispatch :function_signature do
     scope_param
     required_param 'String', :function
     return_type 'Optional[Array[Hash]]'
   end
 
+  # @param entity - the CatalogEntry (class or resource) Type to get a signature from
+  # @param include_meta_params - optional flag that when set to true will include the meta parameters of the entity
   dispatch :catalog_entry_signature do
     scope_param
     required_param 'Variant[Type[CatalogEntry], Type[Type[CatalogEntry]]]', :entity
@@ -119,6 +106,7 @@ Puppet::Functions.create_function(:'tahu::signature', Puppet::Functions::Interna
     return_type 'Optional[Hash]'
   end
 
+  # @param type - the Type for which signature(s) are to be produced for its `new` function
   dispatch :type_new_signature do
     scope_param
     required_param 'Type', :type
