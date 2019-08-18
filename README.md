@@ -8,16 +8,26 @@ Checkout the list of features in the [description](#description)
 3. [Development - Guide for contributing to the module](#development)
 4. [Reference - Function Reference](REFERENCE.md)
 
-(In case you wonder "Tahu" is the Polynesian Tuamoto "God of Knowledge and Magic", son of Atea, the Creator).
+(In case you wonder "Tahu" is the Polynesian Tuamoto "God of Knowledge and Magic", son of "Atea, the Creator").
 
 ## Description
 
 This module provides features for:
 
+* Eval of Puppet Language source text
 * Stacktrace information
 * Serialization and Deserialization
 * Type reflection
 * Data type parsing
+
+### Eval
+
+The `tahu::eval` function allows you to evaluate Puppet Language source strings.
+Primarily intended to make it easier to use `Deferred` function evaluation as the `Deferred` data type does not support further
+processing of a value produced by deferred evaluation of a function and it also does not support lambdas.
+
+For the security conscious, `tahu::eval` is no worse than EPP but it can return any value where EPP can only return a string.
+(In constrast ERB is much worse as it allows full access to the Ruby runtime).
 
 ### Stacktrace
 
