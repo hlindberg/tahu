@@ -12,7 +12,7 @@
 #
 # See
 # * `tahu::type_attributes` for how to get attributes of types
-# * `tahu::get_attr` for how to get the value of an attributes
+# * `tahu::get_attr` for how to get the value of an attribute
 #
 # @example Getting the attributes of a Type[Object]
 #   type MyThing = Object[attributes => { example => String }]
