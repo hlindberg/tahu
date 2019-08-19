@@ -7,16 +7,14 @@
 # * `tahu::convert_to_rich_data` for how to serialize.
 # * [Pcore Data Representation Specification](https://github.com/puppetlabs/puppet-specifications/blob/master/language/data-types/pcore-data-representation.md)
 #
-#
-# @example Deserializing a value
-#   $r = /this is a regexp/
-#   $serialized = tahu::convert_to_rich_data($r)
-#   $deserialized = tahu::convert_from_rich_data($serialized)
-#   notice( $deserialized == $r)
-#   # would notice: true
-#
 Puppet::Functions.create_function(:'tahu::convert_from_rich_data', Puppet::Functions::InternalFunction) do
-
+  # @example Deserializing a value
+  #   $r = /this is a regexp/
+  #   $serialized = tahu::convert_to_rich_data($r)
+  #   $deserialized = tahu::convert_from_rich_data($serialized)
+  #   notice( $deserialized == $r)
+  #   # would notice: true
+  #
   # @param value - The rich data value to convert from
   dispatch :from_rich_data do
     scope_param
