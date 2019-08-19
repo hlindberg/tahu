@@ -6,11 +6,11 @@
 # * Classes (i.e. created by `class` in Puppet Language).
 # * user defined resource types (i.e. created by `define` in Puppet Language).
 #
-# *Function Signatures* are obtained by giving the functions name as a String.
+# *Function Signatures* are obtained by giving the function's name as a `String`.
 #
 # *Data Type signatures* are produced as function signatures for the respective type's `new` function
 # except for `CatalogEntry` data types since they have different semantics.
-# For `CatalogEntry` data types it is also possible to obtain a signature with (or without) meta parameters.
+# For `CatalogEntry` data types a single signature is returned and it is possible to obtain it with or without meta parameters.
 #
 # The `CatalogEntry` data types are:
 # * `Resource[<typename>]` - used to get the signature of a resource type. Short form aliases can be used, for example `File`.

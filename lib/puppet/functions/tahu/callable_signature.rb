@@ -16,19 +16,19 @@
 #   # Would notice: [Callable[Convertible, Radix, Boolean, 1, 3], Callable[NamedArgs]]
 #
 # See
-# * `tahu::is_callable_with` for testing if a callable can be called with a give set of arguments.
+# * `tahu::is_callable_with` for testing if a callable can be called with a given set of arguments.
 # * `tahu::signature` to get more information about the signature as a data structure.
 #
 Puppet::Functions.create_function(:'tahu::callable_signature', Puppet::Functions::InternalFunction) do
 
-  # @param function_name - The name of a function to get Callable signature(s) from
+  # @param function_name - The name of a function to get `Callable` signature(s) from
   dispatch :function_signature do
     scope_param
     required_param 'String', :function_name
     return_type 'Optional[Array[Type[Callable]]]'
   end
 
-  # @param type - The Type to get Callable signature(s) from its `new` function
+  # @param type - The Type to get `Callable` signature(s) from its `new` function
   dispatch :type_new_signature do
     scope_param
     required_param 'Type', :type

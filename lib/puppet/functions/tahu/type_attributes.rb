@@ -8,7 +8,7 @@
 #
 # @example Getting the type attribute names of a `Type`
 #   tahu::type_attributes(Integer).keys.notice
-#   # Would notice `["to", "from"]`
+#   # Would notice ["to", "from"]
 #
 # @example Getting the type attributes of a `Type[Object]`
 #   type MyThing = Object[attributes => { example => String }]

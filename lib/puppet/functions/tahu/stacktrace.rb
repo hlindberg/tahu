@@ -8,8 +8,7 @@
 #
 # @example unknown location
 #   puppet apply -e 'notice(tahu::stacktrace())'
-#
-# Would produce `[[unknown, 1]]`.
+#   # Would produce: [[unknown, 1]]
 #
 # Also see `tahu::where()` for getting only the top of the stack (which is much faster than getting the entire stack
 # and extracting only the immediate caller).
