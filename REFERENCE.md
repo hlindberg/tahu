@@ -16,7 +16,7 @@
 * [`tahu::stacktrace`](#tahustacktrace): Returns a full Puppet stacktrace.  This function returns an `Array[Tuple[String, Integer]]` where each tuple represents a call on the form `[
 * [`tahu::to_type`](#tahuto_type): Converts a type in String format to an actual instance of Type.  This is useful when reading a data type from for example a YAML file and a r
 * [`tahu::type_attributes`](#tahutype_attributes): Returns the type attributes of a `Type`  The returned value is a hash mapping attribute name to the data type for that attribute. If the give
-* [`tahu::where`](#tahuwhere): Returns an `Array` with [file, line] of the manifest calling this function.  When the call to `where()` is from a source string provided via 
+* [`tahu::where`](#tahuwhere): Returns a tuple describing file, and line of the manifest location where this function was called.  When the call to `where()` is from a sour
 
 ## Functions
 
@@ -38,7 +38,7 @@ If the given type (or type of Object) has no attributes an empty hash will be re
 
 See
 * `tahu::type_attributes` for how to get attributes of types
-* `tahu::get_attr` for how to get the value of an attributes
+* `tahu::get_attr` for how to get the value of an attribute
 
 #### Examples
 
@@ -116,7 +116,7 @@ except for `CatalogEntry` data types since they have different semantics and for
 The value `undef` is also returned for non existing functions and for data types that do not have a `new` function.
 
 See
-* `tahu::is_callable_with` for testing if a callable can be called with a give set of arguments.
+* `tahu::is_callable_with` for testing if a callable can be called with a given set of arguments.
 * `tahu::signature` to get more information about the signature as a data structure.
 
 #### Examples
@@ -145,7 +145,7 @@ Returns: `Optional[Array[Type[Callable]]]`
 
 Data type: `String`
 
-- The name of a function to get Callable signature(s) from
+- The name of a function to get `Callable` signature(s) from
 
 #### `tahu::callable_signature(Type $type)`
 
@@ -157,7 +157,7 @@ Returns: `Optional[Array[Type[Callable]]]`
 
 Data type: `Type`
 
-- The Type to get Callable signature(s) from its `new` function
+- The Type to get `Callable` signature(s) from its `new` function
 
 ### tahu::convert_from_rich_data
 
@@ -497,11 +497,11 @@ The signature() function can return a signature for:
 * Classes (i.e. created by `class` in Puppet Language).
 * user defined resource types (i.e. created by `define` in Puppet Language).
 
-*Function Signatures* are obtained by giving the functions name as a String.
+*Function Signatures* are obtained by giving the function's name as a `String`.
 
 *Data Type signatures* are produced as function signatures for the respective type's `new` function
 except for `CatalogEntry` data types since they have different semantics.
-For `CatalogEntry` data types it is also possible to obtain a signature with (or without) meta parameters.
+For `CatalogEntry` data types a single signature is returned and it is possible to obtain it with or without meta parameters.
 
 The `CatalogEntry` data types are:
 * `Resource[<typename>]` - used to get the signature of a resource type. Short form aliases can be used, for example `File`.
@@ -650,8 +650,6 @@ This function returns an `Array[Tuple[String, Integer]]` where each tuple repres
 If "file" is not know (for example when called from the command line) it
 is set to "unknown".
 
-Would produce `[[unknown, 1]]`.
-
 Also see `tahu::where()` for getting only the top of the stack (which is much faster than getting the entire stack
 and extracting only the immediate caller).
 
@@ -664,6 +662,7 @@ then this is a problem in Puppet, not in this function).
 
 ```puppet
 puppet apply -e 'notice(tahu::stacktrace())'
+# Would produce: [[unknown, 1]]
 ```
 
 #### `tahu::stacktrace()`
@@ -676,8 +675,6 @@ This function returns an `Array[Tuple[String, Integer]]` where each tuple repres
 If "file" is not know (for example when called from the command line) it
 is set to "unknown".
 
-Would produce `[[unknown, 1]]`.
-
 Also see `tahu::where()` for getting only the top of the stack (which is much faster than getting the entire stack
 and extracting only the immediate caller).
 
@@ -689,6 +686,7 @@ Returns: `'Array[Tuple[String, Integer]]'` Array[Tuple[String, Integer]]'
 
 ```puppet
 puppet apply -e 'notice(tahu::stacktrace())'
+# Would produce: [[unknown, 1]]
 ```
 
 ### tahu::to_type
@@ -753,7 +751,7 @@ of instances of that type. Use `tahu::attributes` to get the *instance attribute
 
 ```puppet
 tahu::type_attributes(Integer).keys.notice
-# Would notice `["to", "from"]`
+# Would notice ["to", "from"]
 ```
 
 ##### Getting the type attributes of a `Type[Object]`
@@ -802,7 +800,7 @@ Data type: `Type`
 
 Type: Ruby 4.x API
 
-Returns an `Array` with [file, line] of the manifest calling this function.
+Returns a tuple describing file, and line of the manifest location where this function was called.
 
 When the call to `where()` is from a source string provided via an API or command line, the "file" entry will
 be set to the string "unknown".
@@ -811,12 +809,12 @@ be returned.
 
 #### `tahu::where()`
 
-Returns an `Array` with [file, line] of the manifest calling this function.
+Returns a tuple describing file, and line of the manifest location where this function was called.
 
 When the call to `where()` is from a source string provided via an API or command line, the "file" entry will
 be set to the string "unknown".
 In case the function is not called from a puppet manifest, an array of `[undef, undef]` will
 be returned.
 
-Returns: `Tuple[String, Optional[Integer]]`
+Returns: `Tuple[Optional[String], Optional[Integer]]`
 
