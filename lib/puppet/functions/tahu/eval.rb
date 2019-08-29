@@ -13,6 +13,13 @@
 # is how values can be passed from the location where a deferred `eval` is created
 # to the location where it will be resolved/evaluated.
 #
+# @note There is a limitation when using `tahu::eval` from within a hiera 5 backend function
+#   as the lookup context is not carried forward and this means that there is no
+#   guard against recursive calls. In order to properly support this a change would be
+#   needed in Puppet.
+#   An alternative is to use the `tahu::ppyaml_key` backend function (or write a custom backend
+#   along the lines of that implementation) as it provides protection against recursion.
+#
 # @example Using `eval`
 #   tahu::eval("\$x + \$y", { 'x' => 10, 'y' => 20}) # produces 30
 #   # Note the escaped `$` characters since interpolation is unwanted.
