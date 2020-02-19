@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Returns a data structure describing the type signature (parameters with types, and returned type) of "callable" entities.
 #
 # The signature() function can return a signature for:
@@ -152,9 +154,9 @@ Puppet::Functions.create_function(:'tahu::signature', Puppet::Functions::Interna
       repeating = param_names[-1] if signature.last_captures_rest?
       param_names.each_with_index do |name, idx|
         parameters[name.to_s] = p = {}
-        p[TYPE]      = param_types[idx]
-        p[OPT]       = true if idx > min
-        p[REPEATING] = true if name == repeating
+        p['type']      = param_types[idx]
+        p['optional']       = true if idx > min
+        p['repeating'] = true if name == repeating
       end
 
       return_type = type.return_type
@@ -219,24 +221,18 @@ Puppet::Functions.create_function(:'tahu::signature', Puppet::Functions::Interna
     end
   end
 
-  NAME = 'name'.freeze
-  TYPE = 'type'.freeze
-  OPT  = 'optional'.freeze
-  META = 'meta'.freeze
-  REPEATING = 'repeating'.freeze
-
   def builtin_hash(rtype, is_class, include_meta_params)
     type_factory = Puppet::Pops::Types::TypeFactory
     any_type = type_factory.any
     members = {}
     if include_meta_params
-      members = { NAME =>  {TYPE => type_factory.any, OPT => true, META => true}} unless is_class
+      members = { 'name' =>  {'type' => type_factory.any, 'optional' => true, 'meta' => true}} unless is_class
       Puppet::Type.eachmetaparam do |name|
         # TODO: Once meta parameters are typed, this should change to reflect that type
-        members[name.to_s] = { TYPE => any_type, OPT => true, META => true }
+        members[name.to_s] = { 'type' => any_type, 'optional' => true, 'meta' => true }
       end
     end
-    rtype.parameters.each {|name| members[name.to_s] = { TYPE => any_type, OPT => true } }
+    rtype.parameters.each {|name| members[name.to_s] = { 'type' => any_type, 'optional' => true } }
     members
   end
 
@@ -247,18 +243,18 @@ Puppet::Functions.create_function(:'tahu::signature', Puppet::Functions::Interna
     members = {}
 
     if include_meta_params
-      members = { NAME =>  {TYPE => any_type, OPT => true}} unless is_class
+      members = { 'name' =>  {'type' => any_type, 'optional' => true}} unless is_class
       Puppet::Type.eachmetaparam do |name|
         # TODO: Once meta parameters are typed, this should change to reflect that type
-        members[name.to_s] = { TYPE => any_type, OPT => true, META => true }
+        members[name.to_s] = { 'type' => any_type, 'optional' => true, 'meta' => true }
       end
     end
 
     rtype.arguments.each_pair do |name, default|
       arg_type = arg_types[name]
-      members[name.to_s] = {TYPE => arg_type.nil? ? any_type : arg_type }
+      members[name.to_s] = {'type' => arg_type.nil? ? any_type : arg_type }
       # Only include optional key if it should be true
-      members[name.to_s][OPT] = true if !default.nil?
+      members[name.to_s]['optional'] = true if !default.nil?
     end
     members
   end
