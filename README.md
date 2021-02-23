@@ -19,6 +19,7 @@ This module provides features for:
 * Serialization and Deserialization
 * Type reflection
 * Data type parsing
+* Hiera 5 Puppet Language evaluation backend
 
 ### Eval
 
